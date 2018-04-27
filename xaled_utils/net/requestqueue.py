@@ -1,7 +1,7 @@
 import requests
 import subprocess
 
-from kutils.queueworker import QueueWorker
+from xaled_utils.queueworker import QueueWorker
 
 
 import logging

@@ -1,5 +1,4 @@
-from __future__ import print_function
-import kutils.flaskutils as fu
+import xaled_utils.flaskutils as fu
 import unittest
 
 

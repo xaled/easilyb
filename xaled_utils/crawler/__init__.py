@@ -1,5 +1,5 @@
-from kutils.urlselector import  UrlSelector
-from kutils.net.requestqueue import Requester
+from xaled_utils.urlselector import  UrlSelector
+from xaled_utils.net.requestqueue import Requester
 from lxml.html import fromstring
 import logging
 logger = logging.getLogger(__name__)

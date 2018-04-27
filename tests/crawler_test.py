@@ -1,6 +1,6 @@
-from kutils.crawler import Crawler
-from kutils.urlselector.ratequeue import RateQueue
-from kutils.urlselector import UrlSelector
+from xaled_utils.crawler import Crawler
+from xaled_utils.urlselector.ratequeue import RateQueue
+from xaled_utils.urlselector import UrlSelector
 import unittest
 
 # TODO: fix Crawler

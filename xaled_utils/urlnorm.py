@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-from __future__ import print_function
 """
 urlnorm.py - URL normalisation routines
 
@@ -47,10 +46,7 @@ SOFTWARE.
 __version__ = "0.93"
 
 
-try:
-    from urllib.parse import urlparse, urlunparse, unquote
-except ImportError:
-    from urlparse import urlparse, urlunparse, unquote
+from urllib.parse import urlparse, urlunparse, unquote
 try:
     lower = str.lower
 except:

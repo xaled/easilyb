@@ -1,8 +1,5 @@
-try:
-    from urllib.parse import urlparse, urlunparse, parse_qs
-except:
-    from urlparse import urlparse, urlunparse, parse_qs
-from kutils import urlnorm as un
+from urllib.parse import urlparse, urlunparse, parse_qs
+from xaled_utils import urlnorm as un
 import logging
 logger = logging.getLogger(__name__)
 

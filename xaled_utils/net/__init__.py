@@ -1,5 +1,5 @@
 #submodules
-from kutils.net import requestqueue
+from xaled_utils.net import requestqueue
 #imports
 from subprocess import Popen as popen
 from random import choice as _rchoice

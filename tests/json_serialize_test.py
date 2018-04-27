@@ -1,5 +1,4 @@
-from __future__ import unicode_literals, print_function
-import kutils.json_serialize as jsons
+import xaled_utils.json_serialize as jsons
 import unittest
 
 class TestSerializable(jsons.JsonSerializable):

@@ -1,6 +1,6 @@
 from time import time as _time
 from threading import Lock as _Lock
-from kutils.string_ops import random_secure_string
+from xaled_utils.string_ops import random_secure_string
 
 import logging
 logger = logging.getLogger(__name__)

@@ -1,5 +1,5 @@
 import logging
-from kutils.json_min_db import JsonMinConnexion
+from xaled_utils.json_min_db import JsonMinConnexion
 from threading import Lock
 
 logger = logging.getLogger(__name__)

@@ -1,6 +1,5 @@
-from __future__ import print_function
-from kutils.urlselector import UrlSelector
-from kutils.urlselector.ratequeue import RateQueue
+from xaled_utils.urlselector import UrlSelector
+from xaled_utils.urlselector.ratequeue import RateQueue
 #import time
 #import cProfile
 import unittest
