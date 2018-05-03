@@ -22,7 +22,7 @@ COLORS = {
 def configure_logging(console=True, level='DEBUG', modules=None, other_modules_level='WARNING', filepath=None,
                       max_bytes=10485760, backup_count=5, console_format=None, file_format=None,
                       console_datefmt=None, file_datefmt=None, console_print_time=False,
-                      console_colored=True, console_level=None, file_level=None, file_mode='a'):
+                      console_colored=True, console_level=None, file_level=None, file_mode='a', other_level_rules=None):
     handlers = {}
     formatters = {}
     loggers = {}
@@ -79,6 +79,11 @@ def configure_logging(console=True, level='DEBUG', modules=None, other_modules_l
         modules = list()
     for m in modules:
         loggers[m] = {'level':level}
+
+    # other modules rules:
+    if other_level_rules is not None:
+        for k,v in other_level_rules.items():
+            loggers[k] = v
 
     # logging dict config
     config = {
