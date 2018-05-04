@@ -22,6 +22,7 @@ xaled_utils/net/__init__.py
 xaled_utils/net/requestqueue.py
 xaled_utils/string_ops/__init__.py
 xaled_utils/string_ops/_string_ops.py
+xaled_utils/threads/__init__.py
 xaled_utils/time_ops/__init__.py
 xaled_utils/time_ops/_time_ops.py
 xaled_utils/urlselector/__init__.py
