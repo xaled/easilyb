@@ -1,5 +1,5 @@
-from xaled_utils.urlselector import  UrlSelector
-from xaled_utils.net.requestqueue import Requester
+from easilyb.urlselector import  UrlSelector
+from easilyb.net.requestqueue import Requester
 from lxml.html import fromstring
 import logging
 logger = logging.getLogger(__name__)

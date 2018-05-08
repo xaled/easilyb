@@ -1,5 +1,5 @@
 import os
-from xaled_utils.commands import get_command_output, run_command
+from easilyb.commands import get_command_output, run_command
 
 import logging
 logger = logging.getLogger(__name__)

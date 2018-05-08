@@ -1,6 +1,6 @@
 from threading import Lock
 import os
-import xaled_utils.json_serialize as jsons
+import easilyb.json_serialize as jsons
 import json
 import yaml
 

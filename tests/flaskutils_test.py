@@ -1,4 +1,4 @@
-import xaled_utils.flaskutils as fu
+import easilyb.flaskutils as fu
 import unittest
 
 

@@ -1,5 +1,5 @@
 from urllib.parse import urlparse, urlunparse, parse_qs
-from xaled_utils import urlnorm as un
+from easilyb import urlnorm as un
 import logging
 logger = logging.getLogger(__name__)
 

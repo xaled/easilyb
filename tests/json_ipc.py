@@ -2,8 +2,8 @@ import unittest
 import logging
 import threading
 import time
-from xaled_utils.json_ipc import JsonServerSocket, JsonClientSocket, JsonServerMaster, JsonServerProxy
-from xaled_utils.json_serialize import JsonSerializable
+from easilyb.json_ipc import JsonServerSocket, JsonClientSocket, JsonServerMaster, JsonServerProxy
+from easilyb.json_serialize import JsonSerializable
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)

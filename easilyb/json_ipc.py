@@ -2,7 +2,7 @@ import os
 import socket
 import threading
 import logging
-import xaled_utils.json_serialize as json
+import easilyb.json_serialize as json
 
 logger = logging.getLogger(__name__)
 BUFFER_SIZE = 4096

@@ -13,22 +13,22 @@ def package_files(directory):
                 paths.append(os.path.relpath(os.path.join(path, filename), directory))
     return paths
 
-extra_files = package_files('xaled_utils/')
+extra_files = package_files('easilyb/')
 
 #print extra_files
 
 setup(
-      name='xaled_utils',
-      version='0.8.1', # major.minor.fix: MAJOR incompatible API changes, MINOR add backwards-compatible functionality, FIX bug fixes
+      name='easilyb',
+      version='0.8.2', # major.minor.fix: MAJOR incompatible API changes, MINOR add backwards-compatible functionality, FIX bug fixes
       description='Frequently used functions library for Python3 By Khalid Grandi (github.com/xaled).',
       long_description='Frequently used functions library for Python3 By Khalid Grandi (github.com/xaled).',
       long_description_content_type='text/x-rst',
       keywords='library utils common',
       author='Khalid Grandi',
       author_email='kh.grandi@gmail.com',
-      url='https://github.com/xaled/xaled_utils/',
+      url='https://github.com/xaled/easilyb/',
       install_requires=['requests', 'pycrypto', 'pyaml', 'lxml'],
       python_requires='>=3',
-      packages=['xaled_utils'],
+      packages=['easilyb'],
       package_data={'': extra_files},
      )

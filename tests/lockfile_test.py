@@ -1,4 +1,4 @@
-from xaled_utils.lockfile import pidlock, release_lock, LockHeld
+from easilyb.lockfile import pidlock, release_lock, LockHeld
 import os
 import unittest
 

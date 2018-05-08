@@ -1,7 +1,7 @@
 import requests
 import subprocess
 
-from xaled_utils.queueworker import QueueWorker
+from easilyb.queueworker import QueueWorker
 
 
 import logging

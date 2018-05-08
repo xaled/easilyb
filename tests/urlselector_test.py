@@ -1,5 +1,5 @@
-from xaled_utils.urlselector import UrlSelector
-from xaled_utils.urlselector.ratequeue import RateQueue
+from easilyb.urlselector import UrlSelector
+from easilyb.urlselector.ratequeue import RateQueue
 #import time
 #import cProfile
 import unittest

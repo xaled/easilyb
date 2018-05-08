@@ -1,5 +1,5 @@
 import logging
-from xaled_utils.json_min_db import JsonMinConnexion
+from easilyb.json_min_db import JsonMinConnexion
 from threading import Lock
 
 logger = logging.getLogger(__name__)

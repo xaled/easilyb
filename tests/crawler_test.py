@@ -1,6 +1,6 @@
-from xaled_utils.crawler import Crawler
-from xaled_utils.urlselector.ratequeue import RateQueue
-from xaled_utils.urlselector import UrlSelector
+from easilyb.crawler import Crawler
+from easilyb.urlselector.ratequeue import RateQueue
+from easilyb.urlselector import UrlSelector
 import unittest
 
 # TODO: fix Crawler
