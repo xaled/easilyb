@@ -51,7 +51,7 @@ class JsonSerializeEncoder(json.JSONEncoder):
                 return {'_class':obj.__class__.__name__, '_module': None, 'lst': list(obj)}
             return json.JSONEncoder.default(self, obj)
         except:
-            logger.error('Error serializing Json Object; returning default serialization.', exc_info=True)
+            logger.error('Error serializing Json Object: %s; returning default serialization.', obj, exc_info=True)
             return json.JSONEncoder.default(self, obj)
 
 # print json.dumps(data, cls=RoundTripEncoder, indent=2)
@@ -87,7 +87,7 @@ class JsonSerializeDecoder(json.JSONDecoder):
             # return class_.from_json_dict(obj)
             return obj_deser
         except:
-            logger.error('Error deserializing Json Object; returning dict.', exc_info=True)
+            logger.error('Error deserializing Json Object; returning dict: %s', obj, exc_info=True)
             return obj
 
 
