@@ -19,6 +19,7 @@ easilyb/file_ops/_file_ops.py
 easilyb/json_min_db/__init__.py
 easilyb/net/__init__.py
 easilyb/net/requestqueue.py
+easilyb/net/whois.py
 easilyb/string_ops/__init__.py
 easilyb/string_ops/_string_ops.py
 easilyb/threads/__init__.py
@@ -26,3 +27,5 @@ easilyb/time_ops/__init__.py
 easilyb/time_ops/_time_ops.py
 easilyb/urlselector/__init__.py
 easilyb/urlselector/ratequeue.py
+easilyb/validators/__init__.py
+easilyb/validators/ip.py
