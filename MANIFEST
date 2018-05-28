@@ -2,6 +2,7 @@
 README
 setup.py
 easilyb/__init__.py
+easilyb/cache.py
 easilyb/config.py
 easilyb/flaskutils.py
 easilyb/json_ipc.py
