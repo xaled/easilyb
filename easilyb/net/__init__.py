@@ -29,7 +29,7 @@ def wget(url, filepath=None, referer=None, useragent=None, basedir=None, echo=Fa
     try:
         return popen(cmd).wait()
     except:
-        logger.warn('error running wget.', exc_info=True)
+        logger.warning('error running wget.', exc_info=True)
         return 999
 def _generate_firefox_versions():
     global _FIREFOX_VERSIONS

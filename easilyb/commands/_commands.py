@@ -46,7 +46,7 @@ def run_command_ex1(command_line, log=False, log_file=None, yield_=False, timeou
         command_line = shlex.split(str(command_line))
     if isinstance(timeout, int) and timeout > 0:
         command_line = ['timeout', str(timeout)] + command_line
-    logging.debug("Runinnng command: %s", command_line)
+    logger.debug("Runinnng command: %s", command_line)
 
     process = subprocess.Popen(command_line, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, )
     t0 = time.time()

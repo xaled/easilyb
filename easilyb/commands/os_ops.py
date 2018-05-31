@@ -56,7 +56,7 @@ def get_open_ports():
     return_code, output = run_command(["netstat", "-lnt"])
     ret = list()
     if return_code != 0:
-        logging.error("netstat returned a non zero code: %d", return_code)
+        logger.error("netstat returned a non zero code: %d", return_code)
     else:
         lines = output.split('\n')
         for line in lines:
@@ -68,5 +68,5 @@ def get_open_ports():
                     if not port in ret:
                         ret.append(port)
                 except Exception as e:
-                    logging.warn("exception parsing a line in netstat output: %s (line=%s)" % (str(e), line), exc_info=True)
+                    logger.warning("exception parsing a line in netstat output: %s (line=%s)" % (str(e), line), exc_info=True)
     return ret
