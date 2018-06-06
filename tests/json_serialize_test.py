@@ -6,8 +6,15 @@ class TestSerializable(jsons.JsonSerializable):
         self.a = a
         self._temp = b
 
-class CrawlerTest(unittest.TestCase):
-    def xtest_serilizable_class(self):
+
+class TestSerializable2(jsons.get_serializable_class(meta_prefix="__")):
+    def __init__(self, a, b):
+        self.a = a
+        self._temp = b
+
+
+class JsonSerializeTest(unittest.TestCase):
+    def test_serilizable_class(self):
         test = TestSerializable('testa', 'testb')
         json_dump = jsons.dumps({'test':test})
         print(json_dump)
@@ -34,6 +41,17 @@ class CrawlerTest(unittest.TestCase):
         test_load = jsons.loads(test_dump)
         # self.assertIsInstance(test_load['t'], tuple)
         self.assertIsInstance(test_load['s'], set)
+
+    def test_serilizable_class_n(self):
+        test = TestSerializable2('testa', 'testb')
+        json_dump = jsons.dumps({'test':test}, meta_prefix="__")
+        print(json_dump)
+        self.assertTrue(True)
+        json_load = jsons.loads(json_dump, meta_prefix="__")
+        self.assertIsInstance(json_load['test'], TestSerializable2)
+        self.assertEqual(test.a, json_load['test'].a)
+        self.assertNotIn('_temp', json_load['test'].__dict__)
+
 
 
 if __name__ == "__main__":
