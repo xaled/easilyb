@@ -90,11 +90,11 @@ def memfree():
 
 def disk_usage(disk="/"):
     try:
-        return_code, output = run_command_ex1(["df", "-h", disk])
+        return_code, output = run_command_ex1(["df", "-B1", disk])
         if return_code != 0:
             raise Exception("Non-Zero return code: %d" % return_code)
         total, used, available = output.decode(errors="ignore").split('\n')[1].split()[1:4]
-        total, available = convert_bytes_from_human(total), convert_bytes_from_human(available)
+        total, available = int(total), int(available)
         used = total - available
         return total, used, available
     except:
@@ -139,7 +139,7 @@ def convert_bytes_to_human(b, dec=1):
         return str(int(b / 1099511627776 * pow(10, dec)) / pow(10, dec)) + "T"
 
 
-MULTIPLIER = {"k": 1024, "m": 1048576, "g": 1073741824, "t": 1099511627776}
+MULTIPLIER = {"b":1, "k": 1024, "m": 1048576, "g": 1073741824, "t": 1099511627776}
 
 
 def convert_bytes_from_human(h):
