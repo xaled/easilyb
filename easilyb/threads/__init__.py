@@ -15,7 +15,7 @@ def threaded(func, args=None, kwargs=None, daemon=False):
         args = (q,)+args
     else:
         args = [q,] + args
-    t = threading.Thread(target=wrapped, args=(q,)+args, kwargs=kwargs)
+    t = threading.Thread(target=wrapped, args=args, kwargs=kwargs)
     t.setDaemon(daemon)
     t.start()
     t.result_queue = q
