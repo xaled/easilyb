@@ -3,6 +3,9 @@ import os
 import easilyb.json_serialize as jsons
 import json
 import yaml
+from collections import MutableMapping
+
+TREE_DB_META_TEMPLATE = {}
 
 
 def _load_json(path, driver=jsons):
@@ -21,7 +24,8 @@ def _save_json(data, path, indent=None, driver=jsons):
 class JsonMinConnexion:
     """Minimalistic Json Database Connexion class."""
 
-    def __init__(self, path, create=True, template=None, template_file=None, indent=3, readonly=False, driver="jsons"):
+    def __init__(self, path, create=True, template=None, template_file=None, indent=3, readonly=False, driver="jsons",
+                 load=True):
         """JsonMinDb constructor.
 
         :param path: json file path.
@@ -41,6 +45,7 @@ class JsonMinConnexion:
         self.indent = indent
         self.readonly = readonly
         self.lock = Lock()
+        self.db = None
         if driver == "json":
             self.driver = json
         elif driver == "yaml":
@@ -59,77 +64,81 @@ class JsonMinConnexion:
                     _template = {}
 
                 _save_json(_template, path, indent=indent, driver=self.driver)
-                self.db = _load_json(path, driver=self.driver)
+                if load:
+                    self.db = _load_json(path, driver=self.driver)
             else:
                 raise ValueError("Database file doesn't exist: " + path)
-        self.db = _load_json(path, driver=self.driver)
-
-        # db dict calls
-        # self.__contains__ = self.db.__contains__
-        # self.__delitem__ = self.db.__delitem__
-        # self.__getitem__ = self.db.__getitem__
-        # self.__iter__ = self.db.__iter__
-        # self.__len__ = self.db.__len__
-        # self.__setitem__ = self.db.__setitem__
-        #
-        # #self.clear = self.db.clear
-        # #self.copy = self.db.copy
-        # #self.fromkeys = self.db.fromkeys
-        # try: # only in python2
-        #     self.has_key = self.db.has_key
-        #     self.iteritems = self.db.iteritems
-        #     self.iterkeys = self.db.iterkeys
-        #     self.itervalues = self.db.itervalues
-        # except:
-        #     pass
-        # self.items = self.db.items
-        # self.keys = self.db.keys
-        # self.update = self.db.update
-        # self.values = self.db.values
+        if load:
+            self.db = _load_json(path, driver=self.driver)
 
     def __contains__(self, k):
+        self._load_if_not_loaded()
         return self.db.__contains__(k)
 
     def __delitem__(self, k):
+        self._load_if_not_loaded()
         return self.db.__delitem__(k)
 
     def __getitem__(self, k):
+        self._load_if_not_loaded()
         return self.db.__getitem__(k)
 
     def __iter__(self):
+        self._load_if_not_loaded()
         return self.db.__iter__()
 
     def __len__(self):
+        self._load_if_not_loaded()
         return self.db.__len__()
 
     def __setitem__(self, k, o):
+        self._load_if_not_loaded()
         return self.db.__setitem__(k, o)
 
     def items(self):
+        self._load_if_not_loaded()
         return self.db.items()
 
     def keys(self):
+        self._load_if_not_loaded()
         return self.db.keys()
 
     def update(self):
+        self._load_if_not_loaded()
         return self.db.update()
 
     def values(self):
+        self._load_if_not_loaded()
         return self.db.values()
 
     def has_key(self):
-        try: return self.db.has_key()
-        except: pass
+        self._load_if_not_loaded()
+        try:
+            return self.db.has_key()
+        except:
+            pass
+
+    def _load_if_not_loaded(self):
+        with self.lock:
+            if self.db is None:
+                self.db = _load_json(self.path, driver=self.driver)
 
     def save(self):
         """updates database persistance file in the disk. """
         if self.readonly:
             raise Exception("Read Only Access!")
+        if self.db is None:
+            raise Exception("Database is not loaded")
         _save_json(self.db, self.path, indent=self.indent, driver=self.driver)
 
     def reload(self):
         """reload database from disk."""
-        self.db = _load_json(self.path, driver=self.driver)
+        with self.lock:
+            self.db = _load_json(self.path, driver=self.driver)
+    
+    def unload(self):
+        with self.lock:
+            self.db = None
 
     def __str__(self):
         return "<kutils.json_min_db.JsonMinConnexion instance %s>" % self.db.__str__()
@@ -143,3 +152,51 @@ class JsonMinConnexion:
                 self.save()
         finally:
             self.lock.release()
+
+
+class JsonTreeDataBase(MutableMapping):
+    def __init__(self, path, create=True, indent=3, readonly=False, driver="jsons"):
+        self.path = path
+        self.indent = indent
+        self.readonly = readonly
+        self.lock = Lock()
+        self.driver = driver
+        self._meta = None
+        self._meta_path = os.path.join(self.path, '_meta.'+ self.driver)
+
+        if not os.path.isdir(path):
+            if create:
+                try:
+                    os.mkdir(path)
+                    self._meta = JsonMinConnexion(self._meta_path, create=create, template=TREE_DB_META_TEMPLATE,
+                                                  indent=indent, readonly=readonly, driver=driver)
+
+                except:
+                    # Remove db directory if it was created
+
+                    if os.path.isdir(self.path):
+                        try: os.rmdir(self.path)
+                        except: pass
+                    raise
+                finally:
+                    pass
+            else:
+                raise ValueError("Database file doesn't exist: " + path)
+        else:
+            self._meta = JsonMinConnexion(self._meta_path, create=False, indent=indent, readonly=readonly, driver=driver)
+
+
+    def __getitem__(self, item):
+        pass
+
+    def __setitem__(self, key, value):
+        raise Exception('Unimplemented')
+
+    def __delitem__(self, key):
+        pass
+
+    def __iter__(self):
+        raise Exception('Unimplemented')
+
+    def __len__(self):
+        raise Exception('Unimplemented')
