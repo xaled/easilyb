@@ -19,7 +19,7 @@ extra_files = package_files('easilyb/')
 
 setup(
       name='easilyb',
-      version='0.16.0', # major.minor.fix: MAJOR incompatible API changes, MINOR add backwards-compatible functionality, FIX bug fixes
+      version='0.17.0', # major.minor.fix: MAJOR incompatible API changes, MINOR add backwards-compatible functionality, FIX bug fixes
       description='Frequently used functions library for Python3 By Khalid Grandi (github.com/xaled).',
       long_description='Frequently used functions library for Python3 By Khalid Grandi (github.com/xaled).',
       long_description_content_type='text/x-rst',
