@@ -20,6 +20,7 @@ easilyb/file_ops/__init__.py
 easilyb/file_ops/_file_ops.py
 easilyb/json_min_db/__init__.py
 easilyb/net/__init__.py
+easilyb/net/ip.py
 easilyb/net/requestqueue.py
 easilyb/net/whois.py
 easilyb/os_ops/__init__.py
