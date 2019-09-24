@@ -1,4 +1,4 @@
-from threading import Lock
+from threading import RLock as Lock
 import os
 import easilyb.json_serialize as jsons
 import json
