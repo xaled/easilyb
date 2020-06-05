@@ -18,7 +18,8 @@ def cprint(*args, sep=' ', end='\n', file=None, color=None):
 
 
 def yes_no_prompt(message, tries=10, default='n', color=None, trailing=': '):
-    return prompt(message, choices=['y', 'n'], default=default, color=color, trailing=trailing, tries=tries)
+    return prompt(message, choices=['y', 'n'], default=default, color=color, trailing=trailing, tries=tries).lower()\
+           == 'y'
 
 
 def prompt(message, match=None, match_function=None, choices=None, tries=10, default=None, allow_empty=False,
@@ -50,16 +51,18 @@ def prompt(message, match=None, match_function=None, choices=None, tries=10, def
         prompt_message = COLORS[color] + prompt_message + END_COLOR
     while t < tries:
         data = input(prompt_message)
+        datac = data if case_sensitive else data.lower()
+
         if len(data.strip()) == 0 and default is not None:
             return default
         if choices is not None:
-            if data in choices:
+            if datac in choices:
                 return data
         elif match is not None:
-            if match.match(data):
+            if match.match(datac):
                 return data
         elif match_function is not None:
-            if match_function(data):
+            if match_function(datac):
                 return data
         else:
             if allow_empty or len(data.strip()) > 0:
