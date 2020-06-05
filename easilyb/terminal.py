@@ -17,8 +17,12 @@ def cprint(*args, sep=' ', end='\n', file=None, color=None):
     print(*args, file=file, sep=sep, end=end)
 
 
+def yes_no_prompt(message, tries=10, default='n', color=None, trailing=': '):
+    return prompt(message, choices=['y', 'n'], default=default, color=color, trailing=trailing, tries=tries)
+
+
 def prompt(message, match=None, match_function=None, choices=None, tries=10, default=None, allow_empty=False,
-           color=None, trailing='? ', case_sensitive=False, description=None):
+           color=None, trailing=': ', case_sensitive=False, description=None):
     t = 0
     prompt_message = message
     default_showed = default is None
