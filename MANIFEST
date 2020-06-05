@@ -10,6 +10,7 @@ easilyb/json_serialize.py
 easilyb/lockfile.py
 easilyb/logs.py
 easilyb/queueworker.py
+easilyb/terminal.py
 easilyb/urlnorm.py
 easilyb/commands/__init__.py
 easilyb/commands/_commands.py

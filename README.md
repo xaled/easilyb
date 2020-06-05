@@ -5,6 +5,9 @@ Frequently used functions library for Python By Khalid Grandi (github.com/xaled)
 pip3 install easilyb
 
 ## Changelog
+**version 0.19.0:**
+- prompt and cprint functions (easilyb.terminal)
+
 **version 0.18.0:**
 - EasyConfig config path generation, 3 types:
     - Application root
