@@ -1,9 +1,13 @@
 import re
+from string import ascii_letters, ascii_lowercase, ascii_uppercase, digits, hexdigits, octdigits, \
+    printable, punctuation, whitespace
+safe0 = ascii_letters + digits + '_'
+safe1 = safe0 + '.-'
 
 
 def validate_charset(line, charset):
     for c in line:
-        if not c in charset:
+        if c not in charset:
             return False
     return True
 

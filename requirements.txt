@@ -1,1 +1,3 @@
 appdirs
+lxml
+requests

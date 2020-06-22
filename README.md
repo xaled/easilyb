@@ -5,6 +5,9 @@ Frequently used functions library for Python By Khalid Grandi (github.com/xaled)
 pip3 install easilyb
 
 ## Changelog
+**version 0.20.0:**
+- mongodb instance (easilyb.databases.mongo & easilyb.docker)
+
 **version 0.19.0:**
 - prompt and cprint functions (easilyb.terminal)
 
