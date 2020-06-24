@@ -64,7 +64,7 @@ class MongoDB:
 
     def __iter__(self):
         for doc in self.collection.find():
-            yield doc[KEY_ID], doc
+            yield doc
 
     def __enter__(self):
         self.lock.acquire()
@@ -78,3 +78,20 @@ class MongoDB:
                 self.rollback()
         finally:
             self.lock.release()
+
+    def __len__(self):
+        return self.collection.count()
+
+    def bulk_set(self, obj_dict):
+        from pymongo import ReplaceOne
+        requests = list()
+        for key, doc in obj_dict.items():
+            doc[KEY_ID] = key
+            # self.collection.replace_one({KEY_ID: key}, doc, upsert=True)
+            requests.append(ReplaceOne({KEY_ID: key}, doc, upsert=True))
+        # self.collection.bulk_write([ReplaceOne({KEY_ID: key}, doc, upsert=True) for key, doc in obj_dict.items()])
+        self.collection.bulk_write(requests)
+
+    def bulk_delete(self, keys):
+        from pymongo import DeleteOne
+        self.collection.bulk_write([DeleteOne({KEY_ID: key}) for key in keys])

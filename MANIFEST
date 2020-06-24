@@ -19,6 +19,7 @@ easilyb/commands/imagemagick.py
 easilyb/commands/os_ops.py
 easilyb/crawler/__init__.py
 easilyb/databases/__init__.py
+easilyb/databases/elasticsearch.py
 easilyb/databases/mongo.py
 easilyb/file_ops/__init__.py
 easilyb/file_ops/_file_ops.py
