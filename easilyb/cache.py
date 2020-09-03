@@ -47,6 +47,25 @@ class SimpleCache:
             entry = CacheEntry(key, value, expires=expires, ttl=ttl, action=action, action_kwargs=action_kwargs)
             self._db[namespace][key] = entry
 
+    def contains(self, key, namespace=DEFAULT_NAMESPACE):
+        try:
+            self.get(key, namespace=namespace)
+            return True
+        except NotFoundInCache:
+            return False
+
+    def remove(self, key, namespace=DEFAULT_NAMESPACE):
+        with self._lock:
+            if namespace not in self._db:
+                self._db[namespace] = dict()
+            if key in self._db[namespace]:
+                del self._db[namespace][key]
+
+    def clear(self):
+        with self._lock:
+            for n in self._db:
+                self._db[n].clear()
+
     def cached(self, func=None, expires=None, ttl=None, namespace=DEFAULT_NAMESPACE):
         def decorator(func):
             def wrapper(*a, **ka):

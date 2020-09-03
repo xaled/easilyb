@@ -3,8 +3,11 @@ import json
 import logging
 from urllib.parse import quote_plus
 from easilyb.docker import elastic_instance, stop_container
+import re
 
 KEY_ID = '_key_id'
+KEY_TYPE = '_mapping_type'
+KEY_REGEX = re.compile("^[A-Za-z0-9_\.\-]+$")
 logger = logging.getLogger(__name__)
 
 
@@ -14,6 +17,8 @@ class ElasticDB:
         if docker_server:
             self.container_name = "easylib_elastic_" + container_name
             self.container, self.server_url = elastic_instance(self.container_name, data_path=data_path)
+            if self.container is None or self.server_url is None:
+                raise Exception("Could not run docker container")
             if stop_at_exit:
                 import atexit
                 atexit.register(stop_container, self.container)
@@ -22,7 +27,11 @@ class ElasticDB:
         self.index_name = index_name
         self._init_db()
 
+    def get_type(self, type_, id_prefix=None, use_id_prefix=True):
+        return ElasticType(self, type_, id_prefix=id_prefix, use_id_prefix=use_id_prefix)
+
     def __getitem__(self, key):
+        validate_key(key)
         resp_data = self._es_request(requests.get, "/_doc/%s" % quote_plus(key))
         if "found" in resp_data and resp_data["found"]:
             return resp_data["_source"]
@@ -30,12 +39,14 @@ class ElasticDB:
             return None
 
     def __setitem__(self, key, value):
+        validate_key(key)
         # if key is None:
         #     resp_data = self._es_request(requests.post, "/_doc/", json_data=value)
         value[KEY_ID] = key
         self._es_request(requests.put, "/_doc/%s" % quote_plus(key), json_data=value)
 
     def __delitem__(self, key):
+        validate_key(key)
         resp_data = self._es_request(requests.delete, "/_doc/%s" % quote_plus(key))
         if "result" in resp_data and resp_data['result'] == 'deleted':
             logger.debug("Deleted %s", key)
@@ -43,6 +54,7 @@ class ElasticDB:
             logger.debug("Could not delete %s", key)
 
     def __contains__(self, key):
+        validate_key(key)
         return self.__getitem__(key) is not None
 
     def __len__(self):
@@ -101,16 +113,16 @@ class ElasticDB:
 
             # TODO: mapping
 
-    def count(self, q=None):
-        if q is None:
+    def count(self, query=None):
+        if query is None:
             uri = "/_doc/_count"
         else:
-            uri = "/_doc/_count?q=" + quote_plus(q)
+            uri = "/_doc/_count?q=" + quote_plus(query)
         resp_data = self._es_request(requests.get, uri)
         if "count" in resp_data and resp_data:
             return resp_data["count"]
         else:
-            logger.error("Could not get count for q=%s, resp_data=%s", q, resp_data)
+            logger.error("Could not get count for q=%s, resp_data=%s", query, resp_data)
             return None
 
     def bulk_requests(self, reqs):
@@ -124,6 +136,7 @@ class ElasticDB:
     def bulk_index(self, dict_obj):
         reqs = list()
         for k in dict_obj:
+            validate_key(k)
             dict_obj[k][KEY_ID] = k
             reqs.append({"index": {"_index": self.index_name, "_id": k}})
             reqs.append(dict_obj[k])
@@ -137,6 +150,7 @@ class ElasticDB:
     def bulk_delete(self, keys):
         reqs = list()
         for k in keys:
+            validate_key(k)
             reqs.append({"delete": {"_index": self.index_name, "_id": k}})
         self.bulk_requests(reqs)
 
@@ -170,6 +184,94 @@ class ElasticDB:
             last_sort = resp_data['hits']['hits'][-1]['sort']
             resp_data = self._es_request(requests.get, uri, json_data={"search_after": last_sort})
 
+    def search(self, query=None, size=100, from_=0, sort='_doc'):
+        uri = "/_search?size=%d" % size
+        if from_ is not None and from_ > 0:
+            uri += "&from=%d" % from_
+        if query is not None:
+            uri += "&q=%s" % quote_plus(query)
+        if sort is not None:
+            uri += "&sort=%s" % quote_plus(sort)
+        resp_data = self._es_request(requests.get, uri)
+        if "hits" in resp_data and "hits" in resp_data['hits'] and len(resp_data["hits"]['hits']) > 0:
+            return [h['_source'] for h in resp_data['hits']['hits']]
+        else:
+            logger.info("No document found for search (q=%s, size=%s)", query, size)
+            return []
+
+
+class ElasticType:
+    def __init__(self, db, type_, id_prefix=None, use_id_prefix=True):
+        self.db = db
+        validate_key(type_)
+        self.type = type_
+        self.use_id_prefix = use_id_prefix
+        if not self.use_id_prefix:
+            self.id_prefix = ""
+        elif id_prefix is None:
+            self.id_prefix = type_ + '_'
+        else:
+            validate_key(id_prefix)
+            self.id_prefix = id_prefix
+
+    def __getitem__(self, key):
+        doc = self.db[self.id_prefix + key]
+        if doc is None or KEY_TYPE not in doc or doc[KEY_TYPE] != self.type:
+            return None
+        return doc
+
+    def __setitem__(self, key, value):
+        value[KEY_TYPE] = self.type
+        self.db[self.id_prefix + key] = value
+
+    def __delitem__(self, key):
+        del self.db[self.id_prefix + key]
+
+    def __contains__(self, key):
+        return self.__getitem__(key) is not None
+
+    def __len__(self):
+        c = self.count()
+        if c is None:
+            raise Exception("Error getting index count")
+        return c
+
+    def __iter__(self):
+        yield from self.scroll_search()
+
+    def count(self, query=None):
+        return self.db.count(_append_type_query(query, type_=self.type))
+
+    def bulk_requests(self, reqs):
+        return self.db.bulk_requests(reqs)
+
+    def bulk_index(self, dict_obj):
+        reqs = list()
+        for k in dict_obj:
+            dict_obj[k][KEY_ID] = self.id_prefix + k
+            dict_obj[k][KEY_TYPE] = self.type
+            reqs.append({"index": {"_index": self.db.index_name, "_id": self.id_prefix + k}})
+            reqs.append(dict_obj[k])
+        return self.bulk_requests(reqs)
+
+    def delete_by_query(self, query):
+        return self.db.delete_by_query(_append_type_query(query, self.type))
+
+    def bulk_delete(self, keys):
+        reqs = list()
+        for k in keys:
+            reqs.append({"delete": {"_index": self.db.index_name, "_id": self.id_prefix + k}})
+        self.bulk_requests(reqs)
+
+    def scroll_search(self, query=None, size=100, scroll="1m", sort=None):
+        return self.db.scroll_search(query=_append_type_query(query, self.type), size=size, scroll=scroll, sort=sort)
+
+    def search_after(self, query=None, size=100, sort='_doc'):
+        return self.db.search_after(query=_append_type_query(query, self.type), size=size, sort=sort)
+
+    def search(self, query=None, size=100, from_=0, sort='_doc'):
+        return self.db.search(query=_append_type_query(query, self.type), size=size, from_=from_, sort=sort)
+
 
 def _get_error_reason(error):
     reason = ''
@@ -183,3 +285,19 @@ def _get_error_reason(error):
         reason = repr(error)
     reason += '.'
     return reason
+
+
+def _append_query(query, other_query):
+    if query is None:
+        return other_query
+    else:
+        return "(%s) AND (%s)" % (other_query, query)
+
+
+def _append_type_query(query, type_):
+    return _append_query(query, "%s:\"%s\"" % (KEY_TYPE, type_))
+
+
+def validate_key(key):
+    if KEY_REGEX.match(key) is None:
+        raise ValueError("Unauthorized key or type value: only [A-Za-z0-9_\\.\\-] characters are accepted!")

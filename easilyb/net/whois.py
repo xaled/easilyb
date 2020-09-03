@@ -8,8 +8,17 @@ ORGANIZATION_KEYS = ["org.name", "org-name", "orgname", "organization name", "or
                      "maintainer", "mnt-by", "name",
                      "registrant name", "registrar name", "registrar", "registrant"]
 
+NETNAME_KEYS = ["netname"]
 NETRANGE_KEYS = ["netrange", "inetnum", "inet6num"]
 TLD_CHARSET = 'arpbthovieclgdumynsfkzxqwj-1432907865'
+WHOIS_NONE = {
+    'org': None,
+    'netrange': None,
+    'netname': None,
+    'emails': None,
+    'output': None,
+    # 'whois_parsed': None
+}
 
 
 def whois(query):
@@ -26,6 +35,30 @@ def whois(query):
     if netrange == '': netrange = None
     emails = _find_emails(output)
     return org, netrange, emails, output
+
+
+def whois_ex1(query):
+    from easilyb.commands import run_command_ex1
+    from easilyb.validators import validate_ip, validate_domain, validate_charset
+    if not validate_ip(query) and not validate_domain(query) and not validate_charset(query, TLD_CHARSET):
+        raise ValueError("Query is not an IP address nor a domain")
+    ret_code, output = run_command_ex1(["whois", query])
+    output = output.decode(errors="replace")
+    output_parsed = _parse_whois_output(output)
+    org = _find_organization(output_parsed)
+    if org == '': org = None
+    netrange = _find_netrange(output_parsed)
+    if netrange == '': netrange = None
+    emails = _find_emails(output)
+    netname = _find_keys_value(output_parsed, NETNAME_KEYS)
+    return {
+        'org': org,
+        'netrange': netrange,
+        'netname': netname,
+        'emails': emails,
+        'output': output,
+        # 'whois_parsed': output_parsed
+    }
 
 
 def cymru_whois(ip):

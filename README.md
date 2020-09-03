@@ -5,6 +5,16 @@ Frequently used functions library for Python By Khalid Grandi (github.com/xaled)
 pip3 install easilyb
 
 ## Changelog
+**version 0.22.0:**
+- added contains, remove and clear methods to SimpleCache (easily.cache)
+- ElasticSearch key validation
+- added search method to ElasticDB class for paginated search 
+- ElasticType class for type simplified type mapping in ElasticSearch
+- Fix bug in docker container stopping
+- added private attribute to easilyb.net.ip classes
+- added whois_ex1 method to easily.net.whois (netname extraction + dict result instead of tuple)
+
+
 **version 0.21.0:**
 - elastic instance (easilyb.databases.elastic) & some mongo changes
 

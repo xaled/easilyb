@@ -50,7 +50,7 @@ def mongo_instance(instance_name, data_path=None, restart=True, create=True, mon
         container = _docker_client.containers.run(mongo_image, name=instance_name, volumes_from=volumes, detach=True)
 
     tries = 0
-    while tries < 5:
+    while tries < 100:
         if container.status == 'running' and _mongo_is_running(container):
             break
         tries += 1
@@ -59,6 +59,8 @@ def mongo_instance(instance_name, data_path=None, restart=True, create=True, mon
 
     if container is not None and container.status == 'running' and _mongo_is_running(container):
         return container, "mongodb://%s:%d/" % (container.attrs['NetworkSettings']['IPAddress'], MONGO_PORT)
+    if container is not None:
+        container.stop()
     return None, None
 
 
@@ -77,7 +79,7 @@ def elastic_instance(instance_name, data_path=None, restart=True, create=True, i
                                                   environment=environment)
 
     tries = 0
-    while tries < 5:
+    while tries < 150:
         if container.status == 'running' and _elastic_is_running(container):
             break
         tries += 1
@@ -86,8 +88,10 @@ def elastic_instance(instance_name, data_path=None, restart=True, create=True, i
 
     if container is not None and container.status == 'running' and _elastic_is_running(container):
         return container, "http://%s:%d" % (container.attrs['NetworkSettings']['IPAddress'], ELASTIC_PORT)
+    stop_container(container)
     return None, None
 
 
 def stop_container(container):
-    container.stop()
+    if container is not None:
+        container.stop()

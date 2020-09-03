@@ -30,6 +30,7 @@ class IP(_BaseIPDataClass):
         self.decimal = int(self._ip)
         self.compressed = self._ip.compressed
         self.exploded = self._ip.exploded
+        self.private = self._ip.is_private
         self.ID = self.exploded
 
     def __int__(self):
@@ -60,7 +61,7 @@ class Pool(_BaseIPDataClass):
         if '/' in pool:
             try:
                 net = ip_network(pool)
-                lower, upper = ip_address(int(net.network_address) + 1), ip_address(int(net.broadcast_address) - 1)
+                lower, upper = ip_address(int(net.network_address)), ip_address(int(net.broadcast_address))
             except Exception as e:
                 raise ValueError("Bad CIDR pool: " + pool) from e
         elif '-' in pool:
@@ -87,10 +88,13 @@ class Pool(_BaseIPDataClass):
             self.upper = upper
         if self.lower.version != self.upper.version:
             raise ValueError("IPs are not the same version")
+        if int(self.upper) < int(self.lower):
+            raise ValueError("Upper IP is smaller than lower IP")
         self.version = self.lower.version
         self.normalized = self.lower.exploded + ' - ' + self.upper.exploded
         self.count = (int(self.upper) - int(self.lower)) + 1
         self.ID = self.normalized
+        self.private = self.upper.private or self.lower.private
 
     def __contains__(self, ip):
         if not isinstance(ip, IP):
