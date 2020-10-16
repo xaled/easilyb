@@ -185,6 +185,9 @@ class ElasticDB:
             resp_data = self._es_request(requests.get, uri, json_data={"search_after": last_sort})
 
     def search(self, query=None, size=100, from_=0, sort='_doc'):
+        return [h['_source'] for h in self.hits_search(query=query, size=size, from_=from_, sort=sort)]
+
+    def hits_search(self, query=None, size=100, from_=0, sort='_doc'):
         uri = "/_search?size=%d" % size
         if from_ is not None and from_ > 0:
             uri += "&from=%d" % from_
@@ -194,7 +197,7 @@ class ElasticDB:
             uri += "&sort=%s" % quote_plus(sort)
         resp_data = self._es_request(requests.get, uri)
         if "hits" in resp_data and "hits" in resp_data['hits'] and len(resp_data["hits"]['hits']) > 0:
-            return [h['_source'] for h in resp_data['hits']['hits']]
+            return [h for h in resp_data['hits']['hits']]
         else:
             logger.info("No document found for search (q=%s, size=%s)", query, size)
             return []
@@ -271,6 +274,9 @@ class ElasticType:
 
     def search(self, query=None, size=100, from_=0, sort='_doc'):
         return self.db.search(query=_append_type_query(query, self.type), size=size, from_=from_, sort=sort)
+
+    def hits_search(self, query=None, size=100, from_=0, sort='_doc'):
+        return self.db.hits_search(query=_append_type_query(query, self.type), size=size, from_=from_, sort=sort)
 
 
 def _get_error_reason(error):

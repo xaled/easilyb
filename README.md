@@ -5,6 +5,10 @@ Frequently used functions library for Python By Khalid Grandi (github.com/xaled)
 pip3 install easilyb
 
 ## Changelog
+**version 0.23.0:**
+- easilyb.crypto
+- hits_search in elastic
+
 **version 0.22.0:**
 - added contains, remove and clear methods to SimpleCache (easily.cache)
 - ElasticSearch key validation
