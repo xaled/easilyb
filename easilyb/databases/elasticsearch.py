@@ -113,6 +113,10 @@ class ElasticDB:
 
             # TODO: mapping
 
+    def delete_index(self):
+        self._es_request(requests.delete, "")
+        self._es_request(requests.put, "")
+
     def count(self, query=None):
         if query is None:
             uri = "/_doc/_count"
