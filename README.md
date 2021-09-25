@@ -5,6 +5,12 @@ Frequently used functions library for Python By Khalid Grandi (github.com/xaled)
 pip3 install easilyb
 
 ## Changelog
+**version 0.24.1:**
+- making most requirements optional
+
+**version 0.24.0:**
+- delete_index in elastic
+
 **version 0.23.0:**
 - easilyb.crypto
 - hits_search in elastic

@@ -1,1 +1,6 @@
 docker
+docker
+pycrypto
+appdirs
+lxml
+pymongo

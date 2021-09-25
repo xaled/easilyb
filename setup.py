@@ -2,7 +2,7 @@
 from distutils.core import setup
 import os
 
-VERSION = '0.24.0'  # major.minor.fix
+VERSION = '0.24.1'  # major.minor.fix
                     # MAJOR incompatible API changes, MINOR add backwards-compatible functionality, FIX bug fixes
 
 
@@ -31,7 +31,8 @@ if __name__ == "__main__":
         author='Khalid Grandi',
         author_email='kh.grandi@gmail.com',
         url='https://github.com/xaled/easilyb/',
-        install_requires=['requests', 'pycrypto', 'pyaml', 'lxml'],
+        # install_requires=['requests', 'pycrypto', 'pyaml', 'lxml'],
+        install_requires=['requests'],
         python_requires='>=3',
         packages=['easilyb'],
         package_data={'': extra_files},

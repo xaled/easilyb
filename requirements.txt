@@ -1,5 +1,1 @@
-appdirs
-lxml
 requests
-docker
-pycrypto
