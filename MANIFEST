@@ -35,6 +35,8 @@ easilyb/os_ops/linux/__init__.py
 easilyb/os_ops/linux/ps.py
 easilyb/os_ops/linux/xdotool.py
 easilyb/os_ops/linux/xprop.py
+easilyb/serialization/__init__.py
+easilyb/serialization/map.py
 easilyb/socket_ops/__init__.py
 easilyb/string_ops/__init__.py
 easilyb/string_ops/_string_ops.py

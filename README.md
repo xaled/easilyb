@@ -5,6 +5,10 @@ Frequently used functions library for Python By Khalid Grandi (github.com/xaled)
 pip3 install easilyb
 
 ## Changelog
+**version 0.25.0:**
+- Map class in serialization
+- Install new version after upload to pypi
+
 **version 0.24.1:**
 - making most requirements optional
 
