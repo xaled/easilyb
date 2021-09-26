@@ -32,6 +32,13 @@ def get_serializable_class(meta_prefix="_", ignore_local_vars=True):
         def __delitem__(self, key):
             return self.__dict__.__delitem__(key)
 
+        @classmethod
+        def from_dict(cls, obj):
+            obj_dict = {k: obj[k] for k in obj if not k.startswith(meta_prefix) and not k == 'to_json_dict'}
+            ret = cls.__new__(cls)
+            ret.__dict__.update(obj_dict)
+            return ret
+
     return _ParamJsonSerializable
 
 
@@ -103,10 +110,12 @@ def get_decoder_class(meta_prefix="_", ignore_local_vars=True):
                         return obj
                 module_ = importlib.import_module(obj[_module])
                 class_ = module_.__dict__[obj[_class]]
-                obj_deser = _serializable()
-                obj_deser.__module__ = obj[_module]
-                obj_deser.__class__ = class_
-                obj_deser.__dict__ = {k:obj[k] for k in obj if not k.startswith(meta_prefix) and not k == 'to_json_dict'}
+                # obj_deser = _serializable()
+                # obj_deser.__module__ = obj[_module]
+                # obj_deser.__class__ = class_
+                # obj_deser.__dict__ = {k:obj[k] for k in obj if not k.startswith(meta_prefix) and not k == 'to_json_dict'}
+                obj_dict = {k: obj[k] for k in obj if not k.startswith(meta_prefix) and not k == 'to_json_dict'}
+                obj_deser = class_.from_dict(obj_dict)
                 # return class_.from_json_dict(obj)
                 return obj_deser
             except:

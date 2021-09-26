@@ -1,6 +1,7 @@
 import easilyb.json_serialize as jsons
 import unittest
 
+
 class TestSerializable(jsons.JsonSerializable):
     def __init__(self, a, b):
         self.a = a
