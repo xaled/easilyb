@@ -37,6 +37,15 @@ class Map(dict):
     def __repr__(self):
         return super(dict, self).__repr__()
 
+    def __eq__(self, other):
+        return self.__class__ == other.__class__ and super(Map, self).__eq__(other)
+
+    @classmethod
+    def from_dict(cls, obj):
+        ret = cls.__new__(cls)
+        super(Map, ret).update(obj)
+        return ret
+
     # def copy(self):
     #     attributes = super().copy()
     #     obj = Map(attributes)

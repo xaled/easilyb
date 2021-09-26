@@ -25,8 +25,8 @@ class MongoDB:
             self.collection.create_index(KEY_ID, unique=True)
         else:
             self.collection = self.database[collection_name]
-        self.auto_commit = auto_commit
         self.lock = RLock()
+        self.auto_commit = auto_commit
         self.session, self.transaction = None, None
 
     def commit(self):
@@ -47,6 +47,10 @@ class MongoDB:
             raise ValueError("Transaction already started")
         self.session = self.client.start_session()
         self.transaction = self.session.start_transaction()
+        return self.transaction
+
+    def start_session(self, *args, **kwargs):
+        return self.client.start_session(*args, **kwargs)
 
     def __getitem__(self, key):
         return self.collection.find_one({KEY_ID: key})
@@ -95,3 +99,67 @@ class MongoDB:
     def bulk_delete(self, keys):
         from pymongo import DeleteOne
         self.collection.bulk_write([DeleteOne({KEY_ID: key}) for key in keys])
+
+
+class MongoCollection:
+    def __init__(self, collection_name, db, cls=None, create=True):
+        self.collection_name = collection_name
+        self.db = db
+        self.cls = cls
+        if self.collection_name not in self.db.database.collection_names() and create:
+            # Create collection
+            self.collection = self.db.database[collection_name]
+            self.collection.create_index(KEY_ID, unique=True)
+        else:
+            self.collection = self.db.database[collection_name]
+
+    def commit(self):
+        return self.db.commit()
+
+    def rollback(self):
+        return self.db.rollback()
+
+    def start_transaction(self):
+        return self.db.start_transaction()
+
+    def __getitem__(self, key):
+        return self.collection.find_one({KEY_ID: key})
+
+    def __setitem__(self, key, value):
+        doc = dict(value)
+        doc[KEY_ID] = key
+        self.collection.replace_one({KEY_ID: key}, doc, upsert=True, session=self.db.session)
+
+    def __delitem__(self, key):
+        self.collection.delete_one({KEY_ID: key}, session=self.db.session)
+
+    def __contains__(self, key):
+        return self.collection.find_one({KEY_ID: key}) is not None
+
+    def __iter__(self):
+        for doc in self.collection.find():
+            yield doc
+
+    def __enter__(self):
+        return self.db.__enter__()
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        return self.db.__exit__(exc_type, exc_val, exc_tb)
+
+    def __len__(self):
+        return self.collection.count()
+
+    def bulk_set(self, obj_dict):
+        from pymongo import ReplaceOne
+        requests = list()
+        for key, doc in obj_dict.items():
+            doc[KEY_ID] = key
+            # self.collection.replace_one({KEY_ID: key}, doc, upsert=True)
+            requests.append(ReplaceOne({KEY_ID: key}, doc, upsert=True))
+        # self.collection.bulk_write([ReplaceOne({KEY_ID: key}, doc, upsert=True) for key, doc in obj_dict.items()])
+        self.collection.bulk_write(requests)
+
+    def bulk_delete(self, keys):
+        from pymongo import DeleteOne
+        self.collection.bulk_write([DeleteOne({KEY_ID: key}) for key in keys])
+
