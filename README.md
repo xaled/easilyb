@@ -5,6 +5,13 @@ Frequently used functions library for Python By Khalid Grandi (github.com/xaled)
 pip3 install easilyb
 
 ## Changelog
+**version 0.27.0:**
+- Rsync helper class
+- terminal.ctext (color text)
+
+**version 0.26.0:**
+- Revert fixes in serialization
+
 **version 0.25.0:**
 - Map class in serialization
 - Install new version after upload to pypi

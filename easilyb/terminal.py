@@ -17,6 +17,10 @@ def cprint(*args, sep=' ', end='\n', file=None, color=None):
     print(*args, file=file, sep=sep, end=end)
 
 
+def ctext(txt, color):
+    return COLORS[color] + txt + END_COLOR
+
+
 def yes_no_prompt(message, tries=10, default='n', color=None, trailing=': '):
     return prompt(message, choices=['y', 'n'], default=default, color=color, trailing=trailing, tries=tries).lower()\
            == 'y'
