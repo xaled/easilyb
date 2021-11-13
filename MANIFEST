@@ -18,6 +18,7 @@ easilyb/commands/__init__.py
 easilyb/commands/_commands.py
 easilyb/commands/imagemagick.py
 easilyb/commands/os_ops.py
+easilyb/commands/rsync.py
 easilyb/crawler/__init__.py
 easilyb/databases/__init__.py
 easilyb/databases/elasticsearch.py

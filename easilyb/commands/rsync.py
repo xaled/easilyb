@@ -61,9 +61,9 @@ class Rsync:
 
         # endpoints
         if profile_obj['reverse']:
-            cmd += f"{remote_host}:{remote_path} {local_path}"
+            cmd += f" {remote_host}:{remote_path} {local_path}"
         else:
-            cmd += f"{local_path} {remote_host}:{remote_path}"
+            cmd += f" {local_path} {remote_host}:{remote_path}"
 
         self._exec_cmd(cmd)
 

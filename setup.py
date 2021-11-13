@@ -2,7 +2,7 @@
 from distutils.core import setup
 import os
 
-VERSION = '0.27.0'  # major.minor.fix
+VERSION = '0.27.1'  # major.minor.fix
                     # MAJOR incompatible API changes, MINOR add backwards-compatible functionality, FIX bug fixes
 
 
